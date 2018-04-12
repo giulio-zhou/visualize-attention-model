@@ -5,6 +5,8 @@ import skvideo.io
 import sys
 from PIL import Image
 
+# Code for overlay from the Action Recognition using Visual Attention
+# paper: https://github.com/kracwarlock/action-recognition-visual-attention/blob/master/scripts/draw-visualizations.ipynb
 def overlay(bg, fg):
     """
     Overlay attention over the video frame
@@ -42,6 +44,8 @@ assert num_frames == len(attn_mask)
 
 alpha_layer = np.ones((vid_height, vid_width, 1)) * 255
 for i, img in enumerate(vreader):
+    if i % 100 == 0:
+        print(i, num_frames)
     im_h, im_w, im_c = img.shape
     # Process image for attention mask.
     img = np.dstack((img, alpha_layer))
@@ -55,5 +59,3 @@ for i, img in enumerate(vreader):
     # Merge images.
     masked_frame = overlay(img, alpha_img)
     vwriter.writeFrame(masked_frame[:, :, :3])
-    if i == 30:
-        break
