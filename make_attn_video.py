@@ -31,9 +31,8 @@ attn_width = int(sys.argv[4])
 output_path = sys.argv[5]
 
 vreader = skvideo.io.vreader(vid_path)
-# vwriter = skvideo.io.FFmpegWriter(
-#     output_path, inputdict={'-pix_fmt': 'yuv420p', '-vcodec': 'libx264'})
-vwriter = skvideo.io.FFmpegWriter(output_path)
+vwriter = skvideo.io.FFmpegWriter(
+    output_path, outputdict={'-pix_fmt': 'yuv420p', '-vcodec': 'libx264'})
 metadata = skvideo.io.ffprobe(vid_path)['video']
 num_frames = int(metadata['@nb_frames'])
 vid_height, vid_width = int(metadata['@height']), int(metadata['@width'])
@@ -55,7 +54,6 @@ for i, img in enumerate(vreader):
 
     # Merge images.
     masked_frame = overlay(img, alpha_img)
-    np.delete(masked_frame, -1)
-    vwriter.writeFrame(masked_frame)
+    vwriter.writeFrame(masked_frame[:, :, :3])
     if i == 30:
         break
